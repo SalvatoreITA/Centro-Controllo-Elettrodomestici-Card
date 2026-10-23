@@ -1,10 +1,11 @@
-# Centro Controllo Elettrodomestici CARD
+# Centro Controllo Elettrodomestici Card
 
-Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component [**Centro Controllo Elettodomestici**](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.
+Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component:
+[**Centro Controllo Elettodomestici**](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.
 
 La card **si disegna da sola** a partire dallo *slug* del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano.
 
-## Caratteristiche
+## 🌟 Caratteristiche
 
 - **Auto-generante**: basta lo slug del device, la card ricava da sola tutte le entità.
 - **Adattiva alle fonti**: mostra "Da FV" e "Da batteria" solo se le hai; chi non ha il fotovoltaico vede un layout dedicato con la **potenza istantanea**.
@@ -22,28 +23,18 @@ La card **si disegna da sola** a partire dallo *slug* del device: niente dipende
 3. Incolla l'URL di questo repository GitHub
 4. Come categoria (Category) scegli **Lovelace**.
 5. Clicca su **Add** (Aggiungi).
-6. Ora cerca "DomHouse Octopus Card" in HACS, clicca su **Download** e poi ricarica la pagina del tuo browser.
-
----
+6. Ora cerca ""DomHouse Centro Controllo Elettrodomestici Card" in HACS, clicca su **Download** e poi ricarica la pagina del tuo browser.
 
 ### Installazione Manuale (Senza HACS)
 1. Scarica il file `domhouse-octopus-bundle.js`.
 2. Copialo nella tua cartella `www` di Home Assistant (/config/www/).
 3. Vai su **Impostazioni > Dashboard > Risorse**.
-4. Aggiungi una nuova risorsa: `/local/domhouse-octopus-card.js` impostando il tipo su **Modulo JavaScript**.
+4. Aggiungi una nuova risorsa: `/local/domhouse-elettrodomestici-card.js` impostando il tipo su **Modulo JavaScript**.
 5. Ricarica la pagina.
-
-1. Copia `domhouse-elettrodomestico-card.js` in `config/www/`.
-2. **Impostazioni → Dashboard → ⋮ → Risorse → Aggiungi risorsa**
-   - URL: `/local/domhouse-elettrodomestico-card.js`
-   - Tipo: **Modulo JavaScript**
-3. Aggiungi una scheda **manuale** alla dashboard (vedi sotto).
 
 > Dopo ogni aggiornamento del file, ricarica con **Ctrl+Shift+R** per bypassare la cache del browser.
 
----
-
-## Configurazione
+## ⚙️ Configurazione
 
 Esempio minimo:
 
@@ -73,7 +64,7 @@ Per più elettrodomestici: una card ciascuno, cambiando `appliance` e `icona`.
 
 ---
 
-## Editor grafico
+## 🎨 Editor grafico
 
 La card ha un editor visuale (Modifica scheda → la trovi nell'elenco card, oppure ⚙️). Puoi impostare:
 - **Elettrodomestico (slug del device)**
@@ -85,7 +76,7 @@ In fondo all'editor trovi il credito *Salvatore Lentini · DomHouse.it · v3.0*.
 
 ---
 
-## Comportamento adattivo
+## 🖱️ Comportamento adattivo
 
 La card controlla **quali entità esistono** e cambia layout di conseguenza.
 
@@ -107,7 +98,7 @@ La card controlla **quali entità esistono** e cambia layout di conseguenza.
 
 ---
 
-## Illustrazioni
+## 📦 Illustrazioni
 
 Valori ammessi per `icona` (si animano quando l'elettrodomestico è **in funzione**):
 
@@ -117,7 +108,7 @@ Se `icona` non è valida, viene usata `presa`.
 
 ---
 
-## Sezioni della card
+## 🔌 Sezioni della card
 
 Dall'alto in basso:
 
@@ -138,22 +129,18 @@ Dall'alto in basso:
 
 ---
 
-## Entità usate
+## ⚖️ Entità usate
 
 La card costruisce gli `entity_id` come `<dominio>.<slug>_<suffisso>` a partire da `appliance`. Esempi con `appliance: lavatrice`:
 `binary_sensor.lavatrice_in_funzione`, `sensor.lavatrice_potenza`, `sensor.lavatrice_potenza_da_fotovoltaico`, `sensor.lavatrice_potenza_da_batteria`, `sensor.lavatrice_potenza_da_rete`, `sensor.lavatrice_energia_pulita_ciclo`, `sensor.lavatrice_energia_ciclo`, `sensor.lavatrice_durata_ciclo`, `sensor.lavatrice_costo_ciclo`, le statistiche `..._energia_oggi/mese/anno`, `switch.lavatrice_presa`, `time.lavatrice_spegnimento_automatico`, ecc.
 
 Se un'entità **non esiste** (es. non hai la batteria), la relativa riga/tile semplicemente non viene mostrata.
 
----
+## ☕ Supporta il Progetto
 
-## Note e risoluzione problemi
+Ogni piccolo supporto fa un'enorme differenza: mi aiuta a mantenere vivo l'entusiasmo e mi stimola a creare e condividere nuove soluzioni per la community. Grazie di cuore per il tuo aiuto! 🚀
 
-- **Lingua**: gli `entity_id` del component sono generati da HA dai nomi in **italiano**. La card presuppone quella lingua; con HA in un'altra lingua gli slug cambiano e la card non troverebbe le entità.
-- **Slug del device**: se non sei sicuro, in *Impostazioni → Dispositivi e servizi → \[il device\]* guarda un'entità (es. `sensor.<slug>_potenza`): la parte prima di `_potenza` è lo slug da mettere in `appliance`.
-- **La card non si aggiorna dopo un update** → è la cache: **Ctrl+Shift+R**, o svuota la cache delle risorse Lovelace.
-- **L'illustrazione non si muove** → si anima **solo** quando l'elettrodomestico è *In funzione*; da fermo è statica (è voluto).
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/salvatore_dh)
 
----
-
-© DomHouse.it — Salvatore Lentini
+## ❤️ Crediti
+Sviluppato da [Salvatore Lentini - DomHouse.it](https://www.domhouse.it)

@@ -6,7 +6,7 @@ Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò 
 La card **si disegna da sola** a partire dallo *slug* del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano.
 
 <div align="center">
-  <img src="screen_octo.PNG" alt="Card Preview" width="300">
+  <img src="anteprima.PNG" alt="Card Preview" width="300">
 </div>
 
 ## 🌟 Caratteristiche

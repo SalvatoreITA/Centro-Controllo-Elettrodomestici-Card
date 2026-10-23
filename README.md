@@ -5,6 +5,8 @@ Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò 
 
 La card **si disegna da sola** a partire dallo *slug* del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano.
 
+La card è adattiva: si riconfigura da sola in base al tuo impianto. Con il fotovoltaico (e l’eventuale batteria) mostra la ripartizione delle fonti e l’energia pulita; senza, si semplifica e mette in evidenza la potenza istantanea. Così va bene per tutti, con o senza impianto.
+
 <div align="center">
   <img src="anteprima.PNG" alt="Card Preview" width="300">
 </div>

@@ -1,7 +1,7 @@
 {
   "name": "DomHouse Centro Controllo Elettrodomestici Card",
   "content_in_root": true,
-  "filename": "centro-offline-card.js",
+  "filename": "domhouse-elettrodomestici-card.js",
   "render_readme": true,
   "homeassistant": "2024.1.0"
 }

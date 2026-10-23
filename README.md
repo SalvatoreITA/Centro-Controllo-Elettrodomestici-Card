@@ -37,7 +37,7 @@ Per far funzionare questa card, **DEVI** prima installare il componente base che
 
 1. Apri **HACS** nel tuo Home Assistant.
 2. Clicca sui tre puntini in alto a destra e seleziona **Custom repositories** (Repository personalizzati).
-3. Incolla l'URL di questo repository GitHub
+3. Incolla l'URL di questo repository GitHub: https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici-Card
 4. Come categoria (Category) scegli **Lovelace**.
 5. Clicca su **Add** (Aggiungi).
 6. Ora cerca ""DomHouse Centro Controllo Elettrodomestici Card" in HACS, clicca su **Download** e poi ricarica la pagina del tuo browser.

@@ -1,4 +1,11 @@
-# Centro Controllo Elettrodomestici Card
+# Centro Controllo Elettrodomestici (Card)
+
+[![it](https://img.shields.io/badge/lang-it-green.svg)](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici-Card/blob/main/README_it.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici-Card/blob/main/README.md)
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![version](https://img.shields.io/badge/version-v3.0.0-blue.svg)]()
+[![maintainer](https://img.shields.io/badge/maintainer-Salvatore_Lentini_--_DomHouse.it-green.svg)](https://www.domhouse.it)
 
 Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component:
 [**Centro Controllo Elettodomestici**](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.

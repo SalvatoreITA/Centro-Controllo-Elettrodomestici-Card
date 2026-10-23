@@ -1,29 +1,8 @@
-# DomHouse – Card Centro Controllo Elettrodomestici
+# Centro Controllo Elettrodomestici CARD
 
-Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component [**domhouse_elettrodomestici**](../custom_components/domhouse_elettrodomestici/README.md) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.
+Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component [**Centro Controllo Elettodomestici**](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.
 
 La card **si disegna da sola** a partire dallo *slug* del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano.
-
-- **Versione:** 3.0
-- **Tipo:** `custom:domhouse-elettrodomestico-card`
-- **Dipendenze:** nessuna (solo il custom component DomHouse)
-- 🌐 [www.domhouse.it](https://domhouse.it/centro-controllo-elettrodomestici-in-home-assistant/)
-
----
-
-## Indice
-
-- [Caratteristiche](#caratteristiche)
-- [Installazione](#installazione)
-- [Configurazione](#configurazione)
-- [Editor grafico](#editor-grafico)
-- [Comportamento adattivo](#comportamento-adattivo)
-- [Illustrazioni](#illustrazioni)
-- [Sezioni della card](#sezioni-della-card)
-- [Entità usate](#entità-usate)
-- [Note e risoluzione problemi](#note-e-risoluzione-problemi)
-
----
 
 ## Caratteristiche
 
@@ -36,9 +15,23 @@ La card **si disegna da sola** a partire dallo *slug* del device: niente dipende
 - **~30 illustrazioni** di elettrodomestici, animate quando l'apparecchio è in funzione.
 - Tema chiaro/scuro, nessuna dipendenza esterna.
 
+## 📥 Installazione tramite HACS (Consigliata)
+
+1. Apri **HACS** nel tuo Home Assistant.
+2. Clicca sui tre puntini in alto a destra e seleziona **Custom repositories** (Repository personalizzati).
+3. Incolla l'URL di questo repository GitHub
+4. Come categoria (Category) scegli **Lovelace**.
+5. Clicca su **Add** (Aggiungi).
+6. Ora cerca "DomHouse Octopus Card" in HACS, clicca su **Download** e poi ricarica la pagina del tuo browser.
+
 ---
 
-## Installazione
+### Installazione Manuale (Senza HACS)
+1. Scarica il file `domhouse-octopus-bundle.js`.
+2. Copialo nella tua cartella `www` di Home Assistant (/config/www/).
+3. Vai su **Impostazioni > Dashboard > Risorse**.
+4. Aggiungi una nuova risorsa: `/local/domhouse-octopus-card.js` impostando il tipo su **Modulo JavaScript**.
+5. Ricarica la pagina.
 
 1. Copia `domhouse-elettrodomestico-card.js` in `config/www/`.
 2. **Impostazioni → Dashboard → ⋮ → Risorse → Aggiungi risorsa**

@@ -5,6 +5,10 @@ Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò 
 
 La card **si disegna da sola** a partire dallo *slug* del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano.
 
+<div align="center">
+  <img src="screen_octo.PNG" alt="Card Preview" width="300">
+</div>
+
 ## 🌟 Caratteristiche
 
 - **Auto-generante**: basta lo slug del device, la card ricava da sola tutte le entità.
@@ -15,6 +19,10 @@ La card **si disegna da sola** a partire dallo *slug* del device: niente dipende
 - **Sezione Controllo** integrata: presa, canali notifiche, fascia oraria, spegnimento automatico, reset contatori.
 - **~30 illustrazioni** di elettrodomestici, animate quando l'apparecchio è in funzione.
 - Tema chiaro/scuro, nessuna dipendenza esterna.
+
+## ⚠️ Prerequisiti
+Per far funzionare questa card, **DEVI** prima installare il componente base che calcola i dati.
+👉 **[Scarica l'integrazione backend da qui](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici/)**.
 
 ## 📥 Installazione tramite HACS (Consigliata)
 

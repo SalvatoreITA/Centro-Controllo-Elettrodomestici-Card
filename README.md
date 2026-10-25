@@ -14,6 +14,8 @@ La card **si disegna da sola** a partire dallo *slug* del device: niente dipende
 
 La card è adattiva: si riconfigura da sola in base al tuo impianto. Con il fotovoltaico (e l’eventuale batteria) mostra la ripartizione delle fonti e l’energia pulita; senza, si semplifica e mette in evidenza la potenza istantanea. Così va bene per tutti, con o senza impianto.
 
+## 📸 Anteprima
+
 ![Anteprima Card](anteprima.PNG)
 
 ## 🌟 Caratteristiche

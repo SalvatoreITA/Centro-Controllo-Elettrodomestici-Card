@@ -8,11 +8,18 @@
 [![maintainer](https://img.shields.io/badge/maintainer-Salvatore_Lentini_--_DomHouse.it-green.svg)](https://www.domhouse.it)
 
 Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component:
-[**Centro Controllo Elettodomestici**](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.
+[**Centro Controllo Elettrodomestici**](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici) genera per un elettrodomestico: stato, durata e consumi del ciclo, split per fonte (fotovoltaico / batteria / rete), energia pulita, statistiche e controlli.
 
-La card **si disegna da sola** a partire dallo *slug* del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano.
+La card **si disegna da sola** a partire dallo *slug* (o dal nome) del device: niente dipendenze (no card-mod, no button-card), niente lista di entità da scrivere a mano. Funziona con Home Assistant in **qualsiasi lingua**.
 
 La card è adattiva: si riconfigura da sola in base al tuo impianto. Con il fotovoltaico (e l’eventuale batteria) mostra la ripartizione delle fonti e l’energia pulita; senza, si semplifica e mette in evidenza la potenza istantanea. Così va bene per tutti, con o senza impianto.
+
+## 🆕 Novità v3.1
+
+- 🌍 **Indipendente dalla lingua di Home Assistant**: la card trova le entità tramite il registro di HA, quindi funziona con HA in italiano, inglese o qualsiasi altra lingua. Prima, con HA in inglese, mostrava solo trattini "—".
+- ✏️ **Funziona anche con `entity_id` rinominati** a mano.
+- 📂 **Nuova opzione `ciclo_aperto`**: con l'interruttore nell'editor la sezione *Ciclo in corso / Ultimo ciclo* si apre in automatico.
+- 🏷️ **`appliance` più flessibile**: accetta sia lo slug (`lavatrice`) sia il nome del device (`Lavatrice`).
 
 ## 📸 Anteprima
 
@@ -20,11 +27,13 @@ La card è adattiva: si riconfigura da sola in base al tuo impianto. Con il foto
 
 ## 🌟 Caratteristiche
 
-- **Auto-generante**: basta lo slug del device, la card ricava da sola tutte le entità.
+- **Auto-generante**: basta lo slug (o il nome) del device, la card ricava da sola tutte le entità.
+- **Multilingua**: funziona con Home Assistant in qualsiasi lingua e anche con `entity_id` rinominati.
 - **Adattiva alle fonti**: mostra "Da FV" e "Da batteria" solo se le hai; chi non ha il fotovoltaico vede un layout dedicato con la **potenza istantanea**.
 - **Hero dinamico**: durata del ciclo (in corso / ultimo), illustrazione animata dell'elettrodomestico, cerchio con % di energia pulita o potenza.
 - **Barre di ripartizione** colorate e proporzionali (Totale / Da FV / Da batteria / Da rete).
 - **Statistiche** oggi / mese / anno, ultimo ciclo, storico 7 giorni.
+- **Sezioni a tendina** sempre chiuse all'apertura, con l'opzione di tenere aperta in automatico *Ciclo in corso / Ultimo ciclo*.
 - **Sezione Controllo** integrata: presa, canali notifiche, fascia oraria, spegnimento automatico, reset contatori.
 - **~30 illustrazioni** di elettrodomestici, animate quando l'apparecchio è in funzione.
 - Tema chiaro/scuro, nessuna dipendenza esterna.
@@ -40,10 +49,10 @@ Per far funzionare questa card, **DEVI** prima installare il componente base che
 3. Incolla l'URL di questo repository GitHub: https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici-Card
 4. Come categoria (Category) scegli **Lovelace**.
 5. Clicca su **Add** (Aggiungi).
-6. Ora cerca ""DomHouse Centro Controllo Elettrodomestici Card" in HACS, clicca su **Download** e poi ricarica la pagina del tuo browser.
+6. Ora cerca "DomHouse Centro Controllo Elettrodomestici Card" in HACS, clicca su **Download** e poi ricarica la pagina del tuo browser.
 
 ### Installazione Manuale (Senza HACS)
-1. Scarica il file `domhouse-octopus-bundle.js`.
+1. Scarica il file `domhouse-elettrodomestici-card.js`.
 2. Copialo nella tua cartella `www` di Home Assistant (/config/www/).
 3. Vai su **Impostazioni > Dashboard > Risorse**.
 4. Aggiungi una nuova risorsa: `/local/domhouse-elettrodomestici-card.js` impostando il tipo su **Modulo JavaScript**.
@@ -68,14 +77,16 @@ appliance: lavatrice      # slug del device (OBBLIGATORIO)
 name: Lavatrice           # opzionale: titolo mostrato in alto
 icona: lavatrice          # opzionale: illustrazione (default: presa)
 potenza_max: 2500         # opzionale: fondo scala W per barre e cerchio (default 3000)
+ciclo_aperto: true        # opzionale: sezione Ciclo in corso / Ultimo ciclo aperta in automatico
 ```
 
 | Opzione | Obbligatoria | Default | Descrizione |
 |---------|:---:|---------|-------------|
-| `appliance` | ✅ | — | Lo **slug** del device DomHouse (es. `lavatrice`). È il nome del device reso minuscolo con gli spazi in `_`. |
+| `appliance` | ✅ | — | Lo **slug** del device DomHouse (es. `lavatrice`), cioè il nome del device reso minuscolo con gli spazi in `_`. Accetta anche il **nome** del device (es. `Lavatrice`). |
 | `name` | — | dallo slug | Titolo mostrato in testata. |
 | `icona` | — | `presa` | Illustrazione (vedi [elenco](#illustrazioni)). |
 | `potenza_max` | — | `3000` | Fondo scala in W: regola il riempimento delle **barre** e del **cerchio potenza** (utile per tarare su phon, PC, forno, ecc.). |
+| `ciclo_aperto` | — | `false` | Se `true`, la sezione **Ciclo in corso / Ultimo ciclo** è già aperta ogni volta che visualizzi la card. Le altre sezioni restano chiuse. |
 
 Per più elettrodomestici: una card ciascuno, cambiando `appliance` e `icona`.
 
@@ -88,8 +99,9 @@ La card ha un editor visuale (Modifica scheda → la trovi nell'elenco card, opp
 - **Nome**
 - **Illustrazione** (menu a tendina)
 - **Fondo scala potenza · W (barre e cerchio, default 3000)**
+- **Ciclo in corso / Ultimo ciclo sempre aperto** (interruttore)
 
-In fondo all'editor trovi il credito *Salvatore Lentini · DomHouse.it · v3.0*.
+In fondo all'editor trovi il credito *Salvatore Lentini · DomHouse.it · v3.1*.
 
 ---
 
@@ -136,7 +148,8 @@ Dall'alto in basso:
 5. **Statistiche** *(a scomparsa)* — tab Oggi / Mese / Anno (Energia, Costo, Cicli, Tempo), ultimo ciclo (Fine/Durata/Costo), tabella ultimi 7 giorni.
 6. **Controllo** *(a scomparsa)* — vedi sotto.
 
-> Le tre sezioni a tendina (**Ciclo in corso**, **Statistiche**, **Controllo**) partono **sempre chiuse** a ogni apertura della card. Le apri con un tocco; rientrando tornano chiuse.
+> Le tre sezioni a tendina (**Ciclo in corso**, **Statistiche**, **Controllo**) partono **chiuse** a ogni apertura della card. Le apri con un tocco; rientrando tornano chiuse.
+> Con `ciclo_aperto: true` (o l'interruttore nell'editor) la sezione **Ciclo in corso / Ultimo ciclo** parte invece **già aperta**.
 
 ### Sezione Controllo
 - **Presa**: accendi/spegni la presa smart (se configurata).
@@ -148,8 +161,11 @@ Dall'alto in basso:
 
 ## ⚖️ Entità usate
 
-La card costruisce gli `entity_id` come `<dominio>.<slug>_<suffisso>` a partire da `appliance`. Esempi con `appliance: lavatrice`:
+La card trova le entità dal **registro di Home Assistant**: cerca il device dell'elettrodomestico e riconosce ogni entità dalla sua chiave interna (`translation_key`), che non cambia con la lingua. Funziona quindi con HA in **italiano, inglese o qualsiasi altra lingua**, e anche se hai rinominato a mano qualche `entity_id`.
+
+Se il registro non è disponibile, la card ripiega sugli `entity_id` standard `<dominio>.<slug>_<suffisso>`, provando prima il suffisso italiano e poi quello inglese. Esempi con `appliance: lavatrice` (HA in italiano):
 `binary_sensor.lavatrice_in_funzione`, `sensor.lavatrice_potenza`, `sensor.lavatrice_potenza_da_fotovoltaico`, `sensor.lavatrice_potenza_da_batteria`, `sensor.lavatrice_potenza_da_rete`, `sensor.lavatrice_energia_pulita_ciclo`, `sensor.lavatrice_energia_ciclo`, `sensor.lavatrice_durata_ciclo`, `sensor.lavatrice_costo_ciclo`, le statistiche `..._energia_oggi/mese/anno`, `switch.lavatrice_presa`, `time.lavatrice_spegnimento_automatico`, ecc.
+Con HA in inglese gli stessi diventano `sensor.lavatrice_power`, `sensor.lavatrice_power_from_pv`, `binary_sensor.lavatrice_running`, … e la card li trova da sola.
 
 Se un'entità **non esiste** (es. non hai la batteria), la relativa riga/tile semplicemente non viene mostrata.
 

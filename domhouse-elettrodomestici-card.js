@@ -6,34 +6,65 @@
  *   appliance: lavatrice      # slug del device (obbligatorio)
  *   name: Lavatrice           # opzionale
  *   icona: lavatrice          # opzionale: illustrazione (vedi lista)
+ *   ciclo_aperto: true        # opzionale: sezione Ciclo in corso / Ultimo ciclo aperta in automatico
  * Autore: Salvatore Lentini - DomHouse.it
  */
-const DH_VERSION = "3.0";
+const DH_VERSION = "3.1";
+const DH_PLATFORM = "domhouse_elettrodomestici";
 
-// Suffissi entity_id generati dal component (nomi italiani -> slug HA)
-const SUF = {
-  running: ["binary_sensor", "in_funzione"], power: ["sensor", "potenza"],
-  power_ftv: ["sensor", "potenza_da_fotovoltaico"], power_batt: ["sensor", "potenza_da_batteria"],
-  power_grid: ["sensor", "potenza_da_rete"],
-  clean: ["sensor", "energia_pulita"], clean_cycle: ["sensor", "energia_pulita_ciclo"],
-  e_cycle: ["sensor", "energia_ciclo"], e_cycle_ftv: ["sensor", "energia_ciclo_da_fotovoltaico"],
-  e_cycle_batt: ["sensor", "energia_ciclo_da_batteria"],
-  e_cycle_grid: ["sensor", "energia_ciclo_da_rete"], e_total: ["sensor", "energia_totale"],
-  dur_cycle: ["sensor", "durata_ciclo"], cost_cycle: ["sensor", "costo_ciclo"],
-  cycles_total: ["sensor", "cicli_totali"], last_end: ["sensor", "fine_ultimo_ciclo"],
-  last_dur: ["sensor", "durata_ultimo_ciclo"], last_cost: ["sensor", "costo_ultimo_ciclo"],
-  e_oggi: ["sensor", "energia_oggi"], e_mese: ["sensor", "energia_mese"], e_anno: ["sensor", "energia_anno"],
-  c_oggi: ["sensor", "costo_oggi"], c_mese: ["sensor", "costo_mese"], c_anno: ["sensor", "costo_anno"],
-  cy_oggi: ["sensor", "cicli_oggi"], cy_mese: ["sensor", "cicli_mese"], cy_anno: ["sensor", "cicli_anno"],
-  t_oggi: ["sensor", "tempo_oggi"], t_mese: ["sensor", "tempo_mese"], t_anno: ["sensor", "tempo_anno"],
-  week: ["sensor", "riepilogo_settimana"], threshold: ["number", "soglia_di_lavoro"],
-  delay_on: ["number", "ritardo_accensione"], delay_off: ["number", "ritardo_spegnimento"],
-  plug: ["switch", "presa"], autooff: ["time", "spegnimento_automatico"],
-  notif_push: ["switch", "notifica_push"], notif_google: ["switch", "notifica_google"],
-  notif_alexa: ["switch", "notifica_alexa"], auto_enabled: ["switch", "abilita_spegnimento"],
-  notif_start: ["time", "notifiche_dalle"], notif_end: ["time", "notifiche_alle"],
-  notif_ha: ["switch", "notifica_ha"], last_reset: ["sensor", "ultimo_reset"],
+// Entità del component: [dominio, translation_key, suffisso IT, suffisso EN].
+// La card le trova tramite il registro di HA (device dell'elettrodomestico + translation_key),
+// quindi funziona con HA in qualsiasi lingua e anche con entity_id rinominati.
+// I suffissi IT/EN servono solo come ripiego se il registro non è disponibile.
+const ENT = {
+  running: ["binary_sensor", "in_funzione", "in_funzione", "running"],
+  power: ["sensor", "potenza", "potenza", "power"],
+  power_ftv: ["sensor", "potenza_ftv", "potenza_da_fotovoltaico", "power_from_pv"],
+  power_batt: ["sensor", "potenza_batteria", "potenza_da_batteria", "power_from_battery"],
+  power_grid: ["sensor", "potenza_rete", "potenza_da_rete", "power_from_grid"],
+  clean: ["sensor", "energia_pulita", "energia_pulita", "clean_energy"],
+  clean_cycle: ["sensor", "energia_pulita_ciclo", "energia_pulita_ciclo", "clean_energy_cycle"],
+  e_cycle: ["sensor", "energia_ciclo", "energia_ciclo", "cycle_energy"],
+  e_cycle_ftv: ["sensor", "energia_ciclo_ftv", "energia_ciclo_da_fotovoltaico", "cycle_energy_from_pv"],
+  e_cycle_batt: ["sensor", "energia_ciclo_batteria", "energia_ciclo_da_batteria", "cycle_energy_from_battery"],
+  e_cycle_grid: ["sensor", "energia_ciclo_rete", "energia_ciclo_da_rete", "cycle_energy_from_grid"],
+  e_total: ["sensor", "energia_totale", "energia_totale", "total_energy"],
+  dur_cycle: ["sensor", "durata_ciclo", "durata_ciclo", "cycle_duration"],
+  cost_cycle: ["sensor", "costo_ciclo", "costo_ciclo", "cycle_cost"],
+  cycles_total: ["sensor", "cicli_totali", "cicli_totali", "total_cycles"],
+  last_end: ["sensor", "ultimo_ciclo_fine", "fine_ultimo_ciclo", "last_cycle_end"],
+  last_dur: ["sensor", "ultimo_ciclo_durata", "durata_ultimo_ciclo", "last_cycle_duration"],
+  last_cost: ["sensor", "ultimo_ciclo_costo", "costo_ultimo_ciclo", "last_cycle_cost"],
+  e_oggi: ["sensor", "energia_oggi", "energia_oggi", "energy_today"],
+  e_mese: ["sensor", "energia_mese", "energia_mese", "energy_this_month"],
+  e_anno: ["sensor", "energia_anno", "energia_anno", "energy_this_year"],
+  c_oggi: ["sensor", "costo_oggi", "costo_oggi", "cost_today"],
+  c_mese: ["sensor", "costo_mese", "costo_mese", "cost_this_month"],
+  c_anno: ["sensor", "costo_anno", "costo_anno", "cost_this_year"],
+  cy_oggi: ["sensor", "cicli_oggi", "cicli_oggi", "cycles_today"],
+  cy_mese: ["sensor", "cicli_mese", "cicli_mese", "cycles_this_month"],
+  cy_anno: ["sensor", "cicli_anno", "cicli_anno", "cycles_this_year"],
+  t_oggi: ["sensor", "tempo_oggi", "tempo_oggi", "runtime_today"],
+  t_mese: ["sensor", "tempo_mese", "tempo_mese", "runtime_this_month"],
+  t_anno: ["sensor", "tempo_anno", "tempo_anno", "runtime_this_year"],
+  week: ["sensor", "riepilogo_settimana", "riepilogo_settimana", "weekly_summary"],
+  threshold: ["number", "soglia", "soglia_di_lavoro", "working_threshold"],
+  delay_on: ["number", "ritardo_on", "ritardo_accensione", "turn_on_delay"],
+  delay_off: ["number", "ritardo_off", "ritardo_spegnimento", "turn_off_delay"],
+  plug: ["switch", "presa", "presa", "plug"],
+  autooff: ["time", "spegnimento_automatico", "spegnimento_automatico", "auto_power_off_time"],
+  auto_enabled: ["switch", "spegnimento_auto", "abilita_spegnimento", "enable_auto_power_off"],
+  notif_push: ["switch", "notifica_push", "notifica_push", "push_notification"],
+  notif_google: ["switch", "notifica_google", "notifica_google", "google_notification"],
+  notif_alexa: ["switch", "notifica_alexa", "notifica_alexa", "alexa_notification"],
+  notif_ha: ["switch", "notifica_ha", "notifica_ha", "ha_notification"],
+  notif_start: ["time", "notifiche_inizio", "notifiche_dalle", "notifications_from"],
+  notif_end: ["time", "notifiche_fine", "notifiche_alle", "notifications_until"],
+  last_reset: ["sensor", "ultimo_reset", "ultimo_reset", "last_reset"],
 };
+// Slug come quello di HA (minuscolo, senza accenti, non alfanumerici -> "_")
+const dhSlugify = (s) => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "")
+  .toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 const WEEKDAYS = ["lunedi", "martedi", "mercoledi", "giovedi", "venerdi", "sabato", "domenica"];
 const WEEKDAYS_SHORT = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
 
@@ -183,14 +214,74 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
       throw new Error("Imposta 'appliance' con lo slug dell'elettrodomestico (es. lavatrice).");
     }
     this._config = config;
-    this._slug = String(config.appliance).trim();
+    this._slug = dhSlugify(String(config.appliance).trim());
     this._period = this._period || "oggi";
+    this._resKey = null;
     this._ids = {};
-    for (const k in SUF) this._ids[k] = `${SUF[k][0]}.${this._slug}_${SUF[k][1]}`;
+    for (const k in ENT) this._ids[k] = `${ENT[k][0]}.${this._slug}_${ENT[k][2]}`;
     this._built = false;
-    if (this._hass) this._render();
+    if (this._hass) { this._syncIds(); this._render(); }
   }
-  set hass(hass) { this._hass = hass; if (!this._built) this._render(); else this._update(); }
+  set hass(hass) {
+    this._hass = hass;
+    this._syncIds();
+    if (!this._built) this._render(); else this._update();
+  }
+
+  // Ricalcola gli entity_id solo quando cambia il registro (o se il registro non c'è)
+  _syncIds() {
+    const h = this._hass;
+    if (!h) return;
+    if (h.entities && h.entities === this._resKey) return;
+    this._resKey = h.entities || null;
+    const ids = this._resolveIds(h);
+    if (JSON.stringify(ids) !== JSON.stringify(this._ids)) {
+      this._ids = ids;
+      this._built = false; // le sezioni visibili dipendono dalle entità trovate
+    }
+  }
+
+  // 1) Registro HA: device dell'elettrodomestico + translation_key (indipendente dalla lingua)
+  // 2) Ripiego: entity_id con suffisso italiano, poi inglese
+  _resolveIds(h) {
+    const slug = this._slug, states = h.states || {}, ids = {};
+    const reg = h.entities;
+    if (reg) {
+      const mine = [];
+      for (const id in reg) { const e = reg[id]; if (e && e.platform === DH_PLATFORM && e.device_id) mine.push(e); }
+      let dev = null;
+      // device trovato da un entity_id esatto "<slug>_<suffisso IT/EN>" (evita confusione tra forno e forno_2)
+      for (const e of mine) {
+        const dot = e.entity_id.indexOf("."), dom = e.entity_id.slice(0, dot), obj = e.entity_id.slice(dot + 1);
+        for (const k in ENT) {
+          const d = ENT[k];
+          if (d[0] === dom && (obj === `${slug}_${d[2]}` || obj === `${slug}_${d[3]}`)) { dev = e.device_id; break; }
+        }
+        if (dev) break;
+      }
+      // altrimenti dal nome del device
+      if (!dev && h.devices) {
+        for (const e of mine) {
+          const dv = h.devices[e.device_id];
+          if (dv && (dhSlugify(dv.name_by_user || "") === slug || dhSlugify(dv.name || "") === slug)) { dev = e.device_id; break; }
+        }
+      }
+      if (dev) {
+        for (const e of mine) {
+          if (e.device_id !== dev || !e.translation_key) continue;
+          const dom = e.entity_id.split(".")[0];
+          for (const k in ENT) if (ENT[k][0] === dom && ENT[k][1] === e.translation_key) ids[k] = e.entity_id;
+        }
+      }
+    }
+    for (const k in ENT) {
+      if (ids[k]) continue;
+      const [dom, , it, en] = ENT[k];
+      const a = `${dom}.${slug}_${it}`, b = `${dom}.${slug}_${en}`;
+      ids[k] = states[a] ? a : (states[b] ? b : a);
+    }
+    return ids;
+  }
   getCardSize() { return 16; }
 
   _st(key) { return this._hass && this._hass.states[this._ids[key]]; }
@@ -242,7 +333,7 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
           <div class="row" data-ref="rowGrid"><span class="nm"><b style="background:var(--dh-grid)"></b>Da rete</span><span class="track"><span class="fill" data-ref="barGrid" style="background:var(--dh-grid)"></span></span><span class="amt rete" data-ref="pGrid">—</span></div>
         </div>
         <div class="pad sep">
-          <details class="acc top">
+          <details class="acc top"${this._config.ciclo_aperto ? " open" : ""}>
             <summary data-ref="cycleTitle">Ciclo in corso</summary>
             <div class="grid" style="margin-top:10px" data-ref="cycleGrid">
               <div class="tile tap" data-mi="e_cycle"><div class="k">Energia</div><div class="v" data-ref="ecy">—</div></div>
@@ -519,8 +610,9 @@ class DomHouseCardEditor extends HTMLElement {
       { name: "name", selector: { text: {} } },
       { name: "icona", selector: { select: { mode: "dropdown", options: ICON_OPTIONS.map(v => ({ value: v, label: v })) } } },
       { name: "potenza_max", selector: { number: { min: 100, max: 10000, step: 50, mode: "box", unit_of_measurement: "W" } } },
+      { name: "ciclo_aperto", selector: { boolean: {} } },
     ];
-    this._form.computeLabel = (s) => ({ appliance: "Elettrodomestico (slug del device)", name: "Nome (opzionale)", icona: "Illustrazione", potenza_max: "Fondo scala potenza · W (barre e cerchio, default 3000)" }[s.name] || s.name);
+    this._form.computeLabel = (s) => ({ appliance: "Elettrodomestico (slug del device)", name: "Nome (opzionale)", icona: "Illustrazione", potenza_max: "Fondo scala potenza · W (barre e cerchio, default 3000)", ciclo_aperto: "Ciclo in corso / Ultimo ciclo sempre aperto" }[s.name] || s.name);
     if (this._hass) this._form.hass = this._hass;
     this._form.data = this._config;
     this._form.addEventListener("value-changed", (e) => {

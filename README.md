@@ -43,7 +43,7 @@ Spazi, illustrazione, cerchio, barre e righe ridotti: circa il 20% in meno di al
 
 ## 📸 Anteprima
 
-![Anteprima Card](anteprima.PNG)
+![Anteprima Card](anteprima.png)
 
 ## 🌟 Caratteristiche
 

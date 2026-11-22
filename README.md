@@ -4,7 +4,7 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/SalvatoreITA/Centro-Controllo-Elettrodomestici-Card/blob/main/README.md)
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
-[![version](https://img.shields.io/badge/version-v3.1-blue.svg)]()
+[![version](https://img.shields.io/badge/version-v3.2-blue.svg)]()
 [![maintainer](https://img.shields.io/badge/maintainer-Salvatore_Lentini_--_DomHouse.it-green.svg)](https://www.domhouse.it)
 
 Card Lovelace per **Home Assistant** che mostra, in un'unica scheda, tutto ciò che il custom component:
@@ -14,12 +14,32 @@ La card **si disegna da sola** a partire dallo *slug* (o dal nome) del device: n
 
 La card è adattiva: si riconfigura da sola in base al tuo impianto. Con il fotovoltaico (e l’eventuale batteria) mostra la ripartizione delle fonti e l’energia pulita; senza, si semplifica e mette in evidenza la potenza istantanea. Così va bene per tutti, con o senza impianto.
 
-## 🆕 Novità v3.1
+## ✨ Novità  v3.2
 
-- 🌍 **Indipendente dalla lingua di Home Assistant**: la card trova le entità tramite il registro di HA, quindi funziona con HA in italiano, inglese o qualsiasi altra lingua. Prima, con HA in inglese, mostrava solo trattini "—".
-- ✏️ **Funziona anche con `entity_id` rinominati** a mano.
-- 📂 **Nuova opzione `ciclo_aperto`**: con l'interruttore nell'editor la sezione *Ciclo in corso / Ultimo ciclo* si apre in automatico.
-- 🏷️ **`appliance` più flessibile**: accetta sia lo slug (`lavatrice`) sia il nome del device (`Lavatrice`).
+### Pulsanti al posto delle tendine
+Le sezioni a tendina (*Ciclo in corso*, *Statistiche*, *Controllo*) sono sostituite da una fila di pulsanti, nello stesso stile della DomHouse Battery Card:
+
+| Pulsante | Contenuto |
+|---|---|
+| ⚙️ Impostazioni | Presa, soglia di lavoro, ritardi accensione/spegnimento, reset contatori |
+| ⏱ Ciclo | Ciclo in corso / Ultimo ciclo: energia, da FV, da batteria, da rete, costo |
+| 📊 Statistiche | Oggi / Mese / Anno, ultimo ciclo, ultimi 7 giorni |
+| 🔔 Notifiche | Push, Google, Alexa, HA e fascia oraria |
+| ⏱̸ Spegnimento automatico | Abilita e orario (solo se è configurata la presa) |
+
+- Un tocco apre la sezione sotto i pulsanti, un secondo tocco la chiude.
+- Una sola sezione aperta alla volta.
+- All'apertura della card i pulsanti sono tutti chiusi.
+
+### Reset contatori dentro Impostazioni
+Il reset contatori (con conferma) ora si trova in fondo alla sezione **Impostazioni**.
+
+### Card più compatta
+Spazi, illustrazione, cerchio, barre e righe ridotti: circa il 20% in meno di altezza a sezioni chiuse.
+
+## 🔧 Modifiche
+- `ciclo_aperto: true` ora apre in automatico il pulsante **Ciclo**.
+- Nell'editor grafico l'opzione si chiama *Apri in automatico il pulsante Ciclo*.
 
 ## 📸 Anteprima
 

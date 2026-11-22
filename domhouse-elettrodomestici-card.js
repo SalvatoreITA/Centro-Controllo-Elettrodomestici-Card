@@ -6,10 +6,10 @@
  *   appliance: lavatrice      # slug del device (obbligatorio)
  *   name: Lavatrice           # opzionale
  *   icona: lavatrice          # opzionale: illustrazione (vedi lista)
- *   ciclo_aperto: true        # opzionale: sezione Ciclo in corso / Ultimo ciclo aperta in automatico
+ *   ciclo_aperto: true        # opzionale: pulsante Ciclo già aperto
  * Autore: Salvatore Lentini - DomHouse.it
  */
-const DH_VERSION = "3.1";
+const DH_VERSION = "3.2";
 const DH_PLATFORM = "domhouse_elettrodomestici";
 
 // Entità del component: [dominio, translation_key, suffisso IT, suffisso EN].
@@ -216,6 +216,7 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
     this._config = config;
     this._slug = dhSlugify(String(config.appliance).trim());
     this._period = this._period || "oggi";
+    this._panel = config.ciclo_aperto ? "ciclo" : null;   // pulsanti: tutto chiuso (o Ciclo aperto)
     this._resKey = null;
     this._ids = {};
     for (const k in ENT) this._ids[k] = `${ENT[k][0]}.${this._slug}_${ENT[k][2]}`;
@@ -332,22 +333,27 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
           <div class="row" data-ref="rowBatt"><span class="nm"><b style="background:var(--dh-batt)"></b>Da batteria</span><span class="track"><span class="fill" data-ref="barBatt" style="background:var(--dh-batt)"></span></span><span class="amt batt" data-ref="pBatt">—</span></div>
           <div class="row" data-ref="rowGrid"><span class="nm"><b style="background:var(--dh-grid)"></b>Da rete</span><span class="track"><span class="fill" data-ref="barGrid" style="background:var(--dh-grid)"></span></span><span class="amt rete" data-ref="pGrid">—</span></div>
         </div>
-        <div class="pad sep">
-          <details class="acc top"${this._config.ciclo_aperto ? " open" : ""}>
-            <summary data-ref="cycleTitle">Ciclo in corso</summary>
-            <div class="grid" style="margin-top:10px" data-ref="cycleGrid">
+        <div class="pad sep nav">
+          <div class="btns" data-ref="btns">
+            <button type="button" class="nb" data-panel="impost" data-ref="nb_impost" title="Impostazioni" aria-label="Impostazioni" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+            <button type="button" class="nb" data-panel="ciclo" data-ref="nb_ciclo" title="Ciclo" aria-label="Ciclo" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9.5 2h5"/></svg></button>
+            <button type="button" class="nb" data-panel="stats" data-ref="nb_stats" title="Statistiche" aria-label="Statistiche" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
+            <button type="button" class="nb" data-panel="notif" data-ref="nb_notif" title="Notifiche" aria-label="Notifiche" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10 19.5a2 2 0 0 0 4 0"/></svg></button>
+            <button type="button" class="nb" data-panel="auto" data-ref="nb_auto" title="Spegnimento automatico" aria-label="Spegnimento automatico" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 7.6A8 8 0 0 0 16.4 19.7M18.6 16.4A8 8 0 0 0 9.6 5.4"/><path d="M12 9v3M9.5 2h5M3 3l18 18"/></svg></button>
+          </div>
+          <div class="panel" data-pn="ciclo" hidden>
+            <div class="ptitle" data-ref="cycleTitle">Ciclo in corso</div>
+            <div class="grid" data-ref="cycleGrid">
               <div class="tile tap" data-mi="e_cycle"><div class="k">Energia</div><div class="v" data-ref="ecy">—</div></div>
               <div class="tile" data-ref="tileEcyF"><div class="k">Da FV</div><div class="v solar" data-ref="ecyF">—</div></div>
               <div class="tile" data-ref="tileEcyB"><div class="k">Da batteria</div><div class="v batt" data-ref="ecyB">—</div></div>
               <div class="tile" data-ref="tileEcyR"><div class="k">Da rete</div><div class="v rete" data-ref="ecyR">—</div></div>
               <div class="tile"><div class="k">Costo</div><div class="v" data-ref="ccy">—</div></div>
             </div>
-          </details>
-        </div>
-        <div class="pad sep">
-          <details class="acc top">
-            <summary>Statistiche</summary>
-            <div class="tabs" data-ref="tabs" style="margin-top:10px"><button data-p="oggi">Oggi</button><button data-p="mese">Mese</button><button data-p="anno">Anno</button></div>
+          </div>
+          <div class="panel" data-pn="stats" hidden>
+            <div class="ptitle">Statistiche</div>
+            <div class="tabs" data-ref="tabs"><button data-p="oggi">Oggi</button><button data-p="mese">Mese</button><button data-p="anno">Anno</button></div>
             <div class="grid" style="margin-top:10px">
               <div class="tile tap" data-ref="stEnergyTile"><div class="k">Energia</div><div class="v" data-ref="stEnergy">—</div></div>
               <div class="tile"><div class="k">Costo</div><div class="v" data-ref="stCost">—</div></div>
@@ -362,12 +368,10 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
             </div>
             <div class="subh" data-ref="weekTitle">Ultimi 7 giorni</div>
             <table class="wk"><thead><tr><th>Giorno</th><th>kWh</th><th>€</th><th>Cicli</th></tr></thead><tbody data-ref="weekBody"></tbody></table>
-          </details>
-        </div>
-        <div class="pad sep">
-          <details class="acc top">
-            <summary>Controllo</summary>
-            <div class="ctrl" style="margin-top:6px">
+          </div>
+          <div class="panel" data-pn="impost" hidden>
+            <div class="ptitle">Impostazioni</div>
+            <div class="ctrl">
               <div class="line" data-ref="plugLine" hidden>
                 <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v8"/><path d="M18 6a8 8 0 1 1-12 0"/></svg>
                 <span class="lt">Presa</span><span class="sw" data-sw="plug" data-ref="plugSw" role="switch" tabindex="0"></span>
@@ -375,20 +379,6 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
               <div class="line tap" data-mi="threshold"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span class="lt">Soglia di lavoro</span><span class="lv" data-ref="thr">—</span></div>
               <div class="line tap" data-mi="delay_on"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg><span class="lt">Ritardo accensione</span><span class="lv" data-ref="delOn">—</span></div>
               <div class="line tap" data-mi="delay_off"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M9 13h6"/><path d="M9 2h6"/></svg><span class="lt">Ritardo spegnimento</span><span class="lv" data-ref="delOff">—</span></div>
-            </div>
-            <div class="subh">Notifiche</div>
-            <div class="ctrl">
-              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span class="lt">Push</span><span class="sw" data-sw="notif_push" data-ref="pushSw" role="switch" tabindex="0"></span></div>
-              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span class="lt">Google</span><span class="sw" data-sw="notif_google" data-ref="googleSw" role="switch" tabindex="0"></span></div>
-              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg><span class="lt">Alexa</span><span class="sw" data-sw="notif_alexa" data-ref="alexaSw" role="switch" tabindex="0"></span></div>
-              <div class="line" data-ref="haLine"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10 19.5a2 2 0 0 0 4 0"/></svg><span class="lt two"><span>HA</span><span class="hint">Notifica persistente</span></span><span class="sw" data-sw="notif_ha" data-ref="haSw" role="switch" tabindex="0"></span></div>
-              <div class="line tap" data-mi="notif_start"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="lt">Notifiche dalle</span><span class="lv" data-ref="nStart">—</span></div>
-              <div class="line tap" data-mi="notif_end"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="lt">Notifiche alle</span><span class="lv" data-ref="nEnd">—</span></div>
-            </div>
-            <div class="subh" data-ref="autoWrap" hidden>Spegnimento automatico</div>
-            <div class="ctrl" data-ref="autoCtrl" hidden>
-              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18.4 5.6A9 9 0 1 1 5.6 5.6"/><path d="M12 2v8"/></svg><span class="lt">Abilita</span><span class="sw" data-sw="auto_enabled" data-ref="autoSw" role="switch" tabindex="0"></span></div>
-              <div class="line tap" data-mi="autooff"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="lt">Orario</span><span class="lv" data-ref="autooffVal">—</span></div>
             </div>
             <div class="subh">Contatori</div>
             <div class="ctrl">
@@ -403,7 +393,25 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
                 <button class="btn danger" type="button" data-ref="resetYes">Azzera</button>
               </div>
             </div>
-          </details>
+          </div>
+          <div class="panel" data-pn="notif" hidden>
+            <div class="ptitle">Notifiche</div>
+            <div class="ctrl">
+              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span class="lt">Push</span><span class="sw" data-sw="notif_push" data-ref="pushSw" role="switch" tabindex="0"></span></div>
+              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span class="lt">Google</span><span class="sw" data-sw="notif_google" data-ref="googleSw" role="switch" tabindex="0"></span></div>
+              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg><span class="lt">Alexa</span><span class="sw" data-sw="notif_alexa" data-ref="alexaSw" role="switch" tabindex="0"></span></div>
+              <div class="line" data-ref="haLine"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10 19.5a2 2 0 0 0 4 0"/></svg><span class="lt two"><span>HA</span><span class="hint">Notifica persistente</span></span><span class="sw" data-sw="notif_ha" data-ref="haSw" role="switch" tabindex="0"></span></div>
+              <div class="line tap" data-mi="notif_start"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="lt">Notifiche dalle</span><span class="lv" data-ref="nStart">—</span></div>
+              <div class="line tap" data-mi="notif_end"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="lt">Notifiche alle</span><span class="lv" data-ref="nEnd">—</span></div>
+            </div>
+          </div>
+          <div class="panel" data-pn="auto" hidden>
+            <div class="ptitle">Spegnimento automatico</div>
+            <div class="ctrl">
+              <div class="line"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18.4 5.6A9 9 0 1 1 5.6 5.6"/><path d="M12 2v8"/></svg><span class="lt">Abilita</span><span class="sw" data-sw="auto_enabled" data-ref="autoSw" role="switch" tabindex="0"></span></div>
+              <div class="line tap" data-mi="autooff"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="lt">Orario</span><span class="lv" data-ref="autooffVal">—</span></div>
+            </div>
+          </div>
         </div>
       </ha-card>`;
     this._els = {};
@@ -415,11 +423,29 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
       el.addEventListener("click", () => this._toggleSwitch(key));
       el.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); this._toggleSwitch(key); } });
     });
+    root.querySelectorAll("[data-panel]").forEach(b => b.addEventListener("click", () => {
+      const k = b.getAttribute("data-panel");
+      this._panel = this._panel === k ? null : k;   // stesso pulsante = chiude
+      this._showPanel();
+    }));
     this._els.resetBtn.addEventListener("click", () => { this._els.resetConfirm.hidden = false; });
     this._els.resetNo.addEventListener("click", () => { this._els.resetConfirm.hidden = true; });
     this._els.resetYes.addEventListener("click", () => { this._els.resetConfirm.hidden = true; this._doReset(); });
     this._built = true;
+    this._showPanel();
     this._update();
+  }
+
+  // Mostra solo il pannello del pulsante attivo (nessuno = tutto chiuso)
+  _showPanel() {
+    const root = this.shadowRoot;
+    if (!root) return;
+    if (this._panel === "auto" && !this._has("auto_enabled")) this._panel = null;
+    root.querySelectorAll("[data-pn]").forEach(p => { p.hidden = p.getAttribute("data-pn") !== this._panel; });
+    root.querySelectorAll("[data-panel]").forEach(b => {
+      const on = b.getAttribute("data-panel") === this._panel;
+      b.classList.toggle("on", on); b.setAttribute("aria-expanded", on);
+    });
   }
 
   _update() {
@@ -495,7 +521,7 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
     for (const ref in swRefs) { const s = this._st(swRefs[ref]); if (E[ref] && s) E[ref].setAttribute("aria-checked", s.state === "on"); }
     E.plugLine.hidden = !this._has("plug");
     const hasAuto = this._has("auto_enabled");
-    E.autoWrap.hidden = !hasAuto; E.autoCtrl.hidden = !hasAuto;
+    E.nb_auto.hidden = !hasAuto;
     E.thr.textContent = this._has("threshold") ? `${this._num("threshold", 0)} W` : "—";
     E.delOn.textContent = `${this._num("delay_on", 0)} s`;
     E.delOff.textContent = `${this._num("delay_off", 0)} m`;
@@ -525,22 +551,22 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
         --dh-tile: var(--secondary-background-color, #f4f6f8); --dh-tile2: color-mix(in srgb, var(--dh-tile) 70%, var(--dh-border));
         --dh-brand: var(--primary-color, #12a6a0); --dh-solar: #2eae63; --dh-grid: #e8902e; --dh-power: #3f8bd0; --dh-batt: #9d6ae0; --dh-danger: #e5484d; --dh-idle: #8894a0; }
       ha-card { padding: 0; overflow: hidden; color: var(--dh-text); }
-      ha-card > * { padding-left: 18px; padding-right: 18px; }
-      .pad { padding-top: 16px; padding-bottom: 16px; } .sep { border-top: 1px solid var(--dh-border); }
-      h1 { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+      ha-card > * { padding-left: 14px; padding-right: 14px; }
+      .pad { padding-top: 11px; padding-bottom: 11px; } .sep { border-top: 1px solid var(--dh-border); }
+      h1 { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
       small { font-weight: 600; color: var(--dh-muted); font-size: .66em; }
       .title, .subh { font-weight: 700; color: var(--dh-muted); text-transform: uppercase; letter-spacing: .06em; }
-      .title { font-size: 12px; margin-bottom: 10px; } .subh { font-size: 11.5px; margin: 16px 0 8px; }
-      .hd { display: flex; align-items: center; gap: 12px; padding-top: 16px; padding-bottom: 16px; }
-      .hd .ic { width: 42px; height: 42px; border-radius: 12px; flex: none; display: grid; place-items: center; background: var(--dh-tile); color: var(--dh-brand); }
-      .hd .ic svg { width: 23px; height: 23px; } .hd .sub { font-size: 12.5px; color: var(--dh-muted); margin-top: 1px; }
+      .title { font-size: 12px; margin-bottom: 10px; } .subh { font-size: 11.5px; margin: 12px 0 6px; }
+      .hd { display: flex; align-items: center; gap: 10px; padding-top: 11px; padding-bottom: 11px; }
+      .hd .ic { width: 36px; height: 36px; border-radius: 12px; flex: none; display: grid; place-items: center; background: var(--dh-tile); color: var(--dh-brand); }
+      .hd .ic svg { width: 20px; height: 20px; } .hd .sub { font-size: 12.5px; color: var(--dh-muted); margin-top: 1px; }
       .pill { margin-left: auto; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
       .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
       .pill.on { color: var(--dh-solar); background: color-mix(in srgb, var(--dh-solar) 15%, transparent); }
       .pill.off { color: var(--dh-idle); background: color-mix(in srgb, var(--dh-idle) 16%, transparent); }
       .dh-ic { height: 118px; width: auto; max-width: 92%; display: block; margin: 0 auto; }
       .hero .wash { flex: 1 1 auto; display: flex; justify-content: center; align-items: center; min-width: 0; }
-      .hero .wash .dh-ic { height: 80px; max-width: 100%; margin: 0; }
+      .hero .wash .dh-ic { height: 64px; max-width: 100%; margin: 0; }
       .dh-ic .b { fill: var(--dh-card); stroke: var(--dh-border); stroke-width: 2.4; }
       .dh-ic .glass { fill: var(--dh-card); stroke: var(--dh-border); stroke-width: 1.4; }
       .dh-ic .p { fill: var(--dh-tile2); } .dh-ic .d { fill: var(--dh-idle); }
@@ -559,31 +585,35 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
       .ring [data-ref="ringFg"] { transition: stroke-dashoffset .6s ease, stroke-dasharray .6s ease; }
       .hero { display: flex; align-items: center; gap: 10px; } .hero .big { flex: 0 1 auto; min-width: 0; }
       .hero .lab { font-size: 12px; color: var(--dh-muted); text-transform: uppercase; letter-spacing: .05em; }
-      .hero .val { font-size: 27px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.05; margin-top: 4px; white-space: nowrap; }
-      .ring { width: 90px; height: 90px; flex: none; } .ring text { fill: var(--dh-text); font-weight: 750; } .ring .cap { fill: var(--dh-muted); }
-      .flow { display: grid; gap: 10px; } .flow .row { display: grid; grid-template-columns: 84px 1fr 62px; align-items: center; gap: 10px; }
+      .hero .val { font-size: 24px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.05; margin-top: 4px; white-space: nowrap; }
+      .ring { width: 74px; height: 74px; flex: none; } .ring text { fill: var(--dh-text); font-weight: 750; } .ring .cap { fill: var(--dh-muted); }
+      .flow { display: grid; gap: 6px; } .flow .row { display: grid; grid-template-columns: 84px 1fr 62px; align-items: center; gap: 10px; }
       .flow .nm { font-size: 13px; color: var(--dh-muted); display: flex; align-items: center; gap: 6px; } .flow .nm b { width: 9px; height: 9px; border-radius: 3px; flex: none; }
       .flow .track { height: 8px; border-radius: 999px; background: var(--dh-tile2); overflow: hidden; } .flow .fill { display: block; height: 100%; border-radius: 999px; transition: width .5s ease; width: 0; }
       .flow .amt { font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
       .solar { color: var(--dh-solar); } .rete { color: var(--dh-grid); } .batt { color: var(--dh-batt); }
-      .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-      .tile { background: var(--dh-tile); border-radius: 12px; padding: 11px 12px; min-width: 0; } .tile.tap { cursor: pointer; } .tile.tap:hover { filter: brightness(.97); }
+      .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+      .tile { background: var(--dh-tile); border-radius: 10px; padding: 8px 10px; min-width: 0; } .tile.tap { cursor: pointer; } .tile.tap:hover { filter: brightness(.97); }
       .tile .k { font-size: 11px; color: var(--dh-muted); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .tile .v { font-size: 17px; font-weight: 700; margin-top: 3px; font-variant-numeric: tabular-nums; } .tile .v.sm { font-size: 14px; }
+      .tile .v { font-size: 16px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; } .tile .v.sm { font-size: 14px; }
       .tabs { display: flex; gap: 6px; background: var(--dh-tile2); padding: 4px; border-radius: 12px; }
-      .tabs button { flex: 1; font: inherit; font-size: 13px; font-weight: 650; color: var(--dh-muted); border: 0; background: none; padding: 7px 0; border-radius: 9px; cursor: pointer; }
+      .tabs button { flex: 1; font: inherit; font-size: 13px; font-weight: 650; color: var(--dh-muted); border: 0; background: none; padding: 5px 0; border-radius: 9px; cursor: pointer; }
       .tabs button[aria-selected="true"] { background: var(--dh-card); color: var(--dh-text); box-shadow: 0 1px 3px rgba(0,0,0,.14); }
-      details.acc { margin: 0; } details.acc.top { margin-top: 0; }
-      details.acc > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--dh-muted); text-transform: uppercase; letter-spacing: .06em; padding: 2px 0; }
-      details.acc > summary::-webkit-details-marker { display: none; }
-      details.acc > summary::after { content: ""; width: 7px; height: 7px; margin-left: auto; border-right: 2px solid var(--dh-muted); border-bottom: 2px solid var(--dh-muted); transform: rotate(45deg); transition: transform .2s; }
-      details.acc[open] > summary::after { transform: rotate(-135deg); }
-      .ctrl { display: grid; } .line { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-radius: 10px; } .line.tap { cursor: pointer; } .line.tap:hover { background: var(--dh-tile); }
+      .btns { display: flex; gap: 6px; }
+      .nb { flex: 1 1 0; min-width: 0; height: 32px; display: grid; place-items: center; padding: 0; cursor: pointer;
+        background: transparent; color: var(--dh-text); border: 1px solid var(--dh-border); border-radius: 9px; transition: background .15s, color .15s, border-color .15s; }
+      .nb svg { width: 16px; height: 16px; stroke-width: 2; }
+      .nb:hover { border-color: color-mix(in srgb, var(--dh-brand) 55%, var(--dh-border)); }
+      .nb.on { background: color-mix(in srgb, var(--dh-brand) 10%, transparent); border-color: var(--dh-brand); color: var(--dh-brand); }
+      .panel { margin-top: 10px; animation: dh-open .18s ease-out; }
+      .ptitle { font-size: 11.5px; font-weight: 700; color: var(--dh-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+      @keyframes dh-open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+      .ctrl { display: grid; } .line { display: flex; align-items: center; gap: 12px; padding: 7px 2px; border-radius: 10px; } .line.tap { cursor: pointer; } .line.tap:hover { background: var(--dh-tile); }
       .line .ci { width: 20px; height: 20px; color: var(--dh-muted); flex: none; } .line .lt { font-size: 14px; } .line .lv { margin-left: auto; font-size: 14px; font-weight: 650; color: var(--dh-muted); font-variant-numeric: tabular-nums; }
       .sw { margin-left: auto; width: 44px; height: 26px; border-radius: 999px; background: var(--dh-tile2); border: 1px solid var(--dh-border); position: relative; cursor: pointer; transition: background .2s; flex: none; }
       .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s; }
       .sw[aria-checked="true"] { background: var(--dh-brand); border-color: var(--dh-brand); } .sw[aria-checked="true"]::after { transform: translateX(18px); }
-      .wk { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; } .wk th, .wk td { text-align: right; padding: 7px 6px; font-variant-numeric: tabular-nums; }
+      .wk { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; } .wk th, .wk td { text-align: right; padding: 5px 6px; font-variant-numeric: tabular-nums; }
       .wk th { font-size: 11px; color: var(--dh-muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; border-bottom: 1px solid var(--dh-border); }
       .wk td:first-child, .wk th:first-child { text-align: left; } .wk tbody tr + tr td { border-top: 1px solid var(--dh-border); } .wk .d { color: var(--dh-muted); }
       [hidden] { display: none !important; }
@@ -593,7 +623,7 @@ class DomHouseElettrodomesticoCard extends HTMLElement {
       .btn.danger { background: #d9534f; border-color: #d9534f; color: #fff; }
       .confirm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; margin: 2px 0 6px; border-radius: 12px; background: color-mix(in srgb, #d9534f 12%, transparent); font-size: 13px; }
       .confirm span { flex: 1 1 170px; }
-      @media (prefers-reduced-motion: reduce) { .fill, .sw, .sw::after, details.acc > summary::after, .wash.running .spin, .wash.running .spin-f, .wash.running .pulse, .wash.running .flow, .wash.running .rise { animation: none; transition: none; } }
+      @media (prefers-reduced-motion: reduce) { .fill, .sw, .sw::after, .panel, .nb, .wash.running .spin, .wash.running .spin-f, .wash.running .pulse, .wash.running .flow, .wash.running .rise { animation: none; transition: none; } }
     `;
   }
 }
@@ -612,7 +642,7 @@ class DomHouseCardEditor extends HTMLElement {
       { name: "potenza_max", selector: { number: { min: 100, max: 10000, step: 50, mode: "box", unit_of_measurement: "W" } } },
       { name: "ciclo_aperto", selector: { boolean: {} } },
     ];
-    this._form.computeLabel = (s) => ({ appliance: "Elettrodomestico (slug del device)", name: "Nome (opzionale)", icona: "Illustrazione", potenza_max: "Fondo scala potenza · W (barre e cerchio, default 3000)", ciclo_aperto: "Ciclo in corso / Ultimo ciclo sempre aperto" }[s.name] || s.name);
+    this._form.computeLabel = (s) => ({ appliance: "Elettrodomestico (slug del device)", name: "Nome (opzionale)", icona: "Illustrazione", potenza_max: "Fondo scala potenza · W (barre e cerchio, default 3000)", ciclo_aperto: "Apri in automatico il pulsante Ciclo" }[s.name] || s.name);
     if (this._hass) this._form.hass = this._hass;
     this._form.data = this._config;
     this._form.addEventListener("value-changed", (e) => {
